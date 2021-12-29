@@ -20,7 +20,6 @@ def analyze_recent_events():
 
 	for i in range(len(events)):
 		if check_for_venue_match(events[i]):
-			print("name:", events[i]["name"])
 			created = parse_datetime(events[i]["created"])
 			modified = parse_datetime(events[i]["modified"])
 			if (created < this_scan_time and created >= last_scan_time):
@@ -52,30 +51,31 @@ def check_for_venue_match(event):
 	return matches_venue
 
 def update_created_event(event):
-	pass
+	print("updating created event:", event["@id"])
 
 def update_modified_event(event):
-	pass
+	print("updating modified event:", event["@id"])
 
 def parse_datetime(input):
 	return datetime.datetime.strptime(input, "%Y-%m-%d %H:%M:%S")
 
 def get_recently_modified_events():
-	yesterday = str(datetime.date.today() - datetime.timedelta(days = 10))
+	yesterday = str(datetime.date.today() - datetime.timedelta(days = 2))
 	today = str(datetime.date.today())
 	payload = {'srv': 'event_profiles', 'modified_since': yesterday}
-	print("searching for events modified between", yesterday, "and", today)
 	r = requests.get(base_path, params=payload, auth=(secrets.username, secrets.password))
 	events = []
 	
 	try:
 		event_data = text_to_json(r.text)["ccb_api"]["response"]["events"]["event"]
-		for event in event_data:
-			events.append(event)
+		if isinstance(event_data, list):
+			for event in event_data:
+				events.append(event)
+		else:
+			events.append(event_data)
 	except:
 		pass
 	
-	print("found", len(events), "events in the timeframe")
 	return events
 
 def text_to_json(text):
