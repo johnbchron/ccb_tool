@@ -1,17 +1,14 @@
 
-import requests, json, xmltodict, datetime, secrets
+import requests, json, datetime, utils, ccb, asana, secrets
 from pprint import pprint
 
-base_path = "https://antiochcc.ccbchurch.com/api.php"
-time_diff = datetime.timedelta(hours = 4)
-
-venue_ids = [118, 3, 4, 78, 116, 36, 8, 10, 12]
+time_diff = datetime.timedelta(hours = 72)
 
 def main():
 	analyze_recent_events()
 
 def analyze_recent_events():
-	events = get_recently_modified_events()
+	events = ccb.get_recently_modified_events()
 
 	modified_events = []
 	created_events = []
@@ -20,8 +17,8 @@ def analyze_recent_events():
 
 	for i in range(len(events)):
 		if check_for_venue_match(events[i]):
-			created = parse_datetime(events[i]["created"])
-			modified = parse_datetime(events[i]["modified"])
+			created = utils.parse_datetime(events[i]["created"])
+			modified = utils.parse_datetime(events[i]["modified"])
 			if (created < this_scan_time and created >= last_scan_time):
 				created_events.append(events[i])
 			elif (modified < this_scan_time and modified >= last_scan_time):
@@ -38,51 +35,34 @@ def check_for_venue_match(event):
 		return False
 
 	resources = event["resources"]["resource"]
-	matches_venue = False
 
 	if isinstance(resources, list):
 		for resource in resources:
-			if int(resource["@id"]) in venue_ids:
-				matches_venue = True
+			if resource["@id"] in secrets.venue_ids:
+				event["venue"] = resource["@id"]
+				return True
 	else:
-		if int(resources["@id"]) in venue_ids:
-			matches_venue = True
+		if resources["@id"] in secrets.venue_ids:
+			event["venue"] = resources["@id"]
+			return True
 
-	return matches_venue
+	return False
 
 def update_created_event(event):
-	print("updating created event:", event["@id"])
+	print("pushing created event:", event["@id"])
+	task_gid = asana.find_task_by_event_id(int(event["@id"]))
+	if task_gid is None:
+		asana.create_task_from_event(event, created=True)
+	else:
+		asana.update_task_from_event(task_gid, event, created=True)
 
 def update_modified_event(event):
 	print("updating modified event:", event["@id"])
-
-def parse_datetime(input):
-	return datetime.datetime.strptime(input, "%Y-%m-%d %H:%M:%S")
-
-def get_recently_modified_events():
-	yesterday = str(datetime.date.today() - datetime.timedelta(days = 2))
-	today = str(datetime.date.today())
-	payload = {'srv': 'event_profiles', 'modified_since': yesterday}
-	r = requests.get(base_path, params=payload, auth=(secrets.username, secrets.password))
-	events = []
-	
-	try:
-		event_data = text_to_json(r.text)["ccb_api"]["response"]["events"]["event"]
-		if isinstance(event_data, list):
-			for event in event_data:
-				events.append(event)
-		else:
-			events.append(event_data)
-	except:
-		pass
-	
-	return events
-
-def text_to_json(text):
-	return xmltodict.parse(text)
-
-def print_json(data):
-	print(json.dumps(data, indent=2))
+	task_gid = asana.find_task_by_event_id(int(event["@id"]))
+	if task_gid is None:
+		asana.create_task_from_event(event, modified=True)
+	else:
+		asana.update_task_from_event(task_gid, event, modified=True)
 
 if __name__ == '__main__':
 	main()
