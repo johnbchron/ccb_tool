@@ -5,15 +5,13 @@ from pprint import pprint
 base_path = "https://app.asana.com/api/1.0/"
 
 def main():
+	# utils.print_json(list_projects())
 	# list_sections_by_project(project_gid=secrets.asana_test_project_gid)
-	# list_sections_by_project(project_gid=secrets.asana_project_gid)
+	utils.print_json(list_sections_by_project(project_gid=secrets.asana_test_project_gid))
 	# list_tasks_by_project(project_gid=secrets.asana_test_project_gid)
 	# list_tasks_by_project(project_gid=secrets.asana_project_gid)
 	# get_task(str(1201548447662435))
 	# find_task_by_event_id(12345)
-	tags = list_tags()
-	utils.print_json(tags)
-	print(len(tags))
 
 def list_projects():
 	headers = {"Authorization": secrets.asana_pat}
@@ -77,10 +75,16 @@ def create_task_from_event(event, created=False, modified=False):
 	payload["data"]["name"] = pretty_date + " " + event["name"] + " (" + str(event["@id"]) + ")"
 	payload["data"]["html_notes"] = "<body><ul><li><a href=\"https://antiochcc.ccbchurch.com/event_detail.php?event_id=" + str(event["@id"]) + "\">CCB</a></li></ul></body>"
 	if created:
-		payload["data"]["tags"] = [str(find_tag_by_name("new"))]
+		tag = find_tag_by_name("new")
+		if tag is not None:
+			payload["data"]["tags"] = [str(tag)]
 	elif modified:
-		payload["data"]["tags"] = [str(find_tag_by_name("changed/updated"))]
-	payload["data"]["tags"].append(str(find_tag_by_name(secrets.venue_ids[event["venue"]])))
+		tag = find_tag_by_name("changed/updated")
+		if tag is not None:
+			payload["data"]["tags"] = [str(tag)]
+	tag = find_tag_by_name(secrets.venue_ids[event["venue"]])
+	if tag is not None:
+		payload["data"]["tags"].append(str(tag))
 	utils.print_json(payload)
 
 	headers = {"Authorization": secrets.asana_pat}
