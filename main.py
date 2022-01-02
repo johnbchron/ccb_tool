@@ -2,13 +2,13 @@
 import requests, json, datetime, utils, ccb, asana, secrets
 from pprint import pprint
 
-time_diff = datetime.timedelta(hours = 72)
+time_diff = datetime.timedelta(days = 30)
 
 def main():
 	analyze_recent_events()
 
 def analyze_recent_events():
-	events = ccb.get_recently_modified_events()
+	events = ccb.get_recently_modified_events(time_diff=time_diff)
 
 	modified_events = []
 	created_events = []

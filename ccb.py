@@ -4,8 +4,10 @@ from pprint import pprint
 
 base_path = "https://antiochcc.ccbchurch.com/api.php"
 
-def get_recently_modified_events():
-	yesterday = str(datetime.date.today() - datetime.timedelta(days = 2))
+def get_recently_modified_events(time_diff=None):
+	if time_diff is None:
+		time_diff = datetime.timedelta(hours = 4)
+	yesterday = str(datetime.date.today() - time_diff - datetime.timedelta(days = 1))
 	today = str(datetime.date.today())
 	payload = {'srv': 'event_profiles', 'modified_since': yesterday}
 	r = requests.get(base_path, params=payload, auth=(secrets.ccb_username, secrets.ccb_password))
