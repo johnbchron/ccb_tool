@@ -48,7 +48,7 @@ def get_master_subtask_names():
 	subtask_names = []
 	for item in data:
 		subtask_names.append(item["name"])
-	return subtask_names
+	return subtask_names[::-1]
 
 def list_tags():
 	headers = {"Authorization": secrets.asana_pat}
