@@ -8,9 +8,10 @@ catch_errors = True
 subtask_names = []
 
 def main():
-	analyze_recent_events()
+	# analyze_recent_events()
+	pass
 
-def analyze_recent_events():
+def analyze_recent_events(catch_errors=True):
 	# declare subtask_names as a global variable
 	global subtask_names
 	# pull all new events from ccb
