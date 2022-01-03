@@ -6,6 +6,7 @@ base_path = "https://antiochcc.ccbchurch.com/api.php"
 
 # grab all events modified after a certain date from ccb
 def get_recently_modified_events(time_diff=None):
+	print("collecting recently modified events from ccb...")
 	# sets a default for time_diff (4 hours)
 	if time_diff is None:
 		time_diff = datetime.timedelta(hours = 4)
@@ -21,9 +22,11 @@ def get_recently_modified_events(time_diff=None):
 		if isinstance(event_data, list):
 			for event in event_data:
 				events.append(event)
+			print("found", len(events), "events")
 		else:
+			print("found 1 event")
 			events.append(event_data)
 	except:
-		pass
+		print("found no events or GET request failed")
 	
 	return events
