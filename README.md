@@ -8,4 +8,4 @@
  - Run with `python run_continuously.py` or `python run_once.py` for debugging
 
 ### Docker
- If you want to use docker, clone the repo like above and build the image by running `docker build -t ccb_tool .` in the repo directory. Run with `docker run -d --mount type=bind,source=/home/user/.ccb_tool,target=/ccb_tool/config --name ccb_tool ccb_tool` or similar. Place a secrets file in the bound directory following `example_secrets.py`.
+ If you want to use docker, clone the repo like above and build the image by running `docker build -t ccb_tool .` in the repo directory. Run with `docker run -d -i -t --mount type=bind,source=/home/user/.ccb_tool,target=/ccb_tool/config --name ccb_tool ccb_tool` or similar. Place a secrets file in the bound directory following `example_secrets.py`.
