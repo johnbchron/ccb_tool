@@ -1,3 +1,6 @@
+import sys
+
+sys.path.insert(0, './config/')
 
 import requests, json, datetime, utils, ccb, asana, secrets
 from pprint import pprint
