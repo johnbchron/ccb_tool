@@ -5,14 +5,7 @@ from pprint import pprint
 base_path = "https://app.asana.com/api/1.0/"
 
 def main():
-	# utils.print_json(list_projects())
-	# list_sections_by_project(project_gid=secrets.asana_test_project_gid)
-	# utils.print_json(list_sections_by_project(project_gid=secrets.asana_test_project_gid))
-	# utils.print_json(list_tasks_by_project(project_gid=secrets.asana_test_project_gid))
-	# utils.print_json(list_tasks_by_project(project_gid=secrets.asana_project_gid))
-	# utils.print_json(list_subtasks(get_task(str(find_task_by_name("template")), restricted=False)["gid"]))
-	# find_task_by_event_id(12345)
-	# print(get_master_subtask_names())
+	# don't run any tests
 	pass
 
 def list_projects():
