@@ -135,18 +135,7 @@ def create_task_from_event(event, subtask_names, created=False, modified=False):
 	
 	payload["data"]["html_notes"] = generate_task_description(event)
 	
-	payload["data"]["tags"] = []
-	if created:
-		tag = find_tag_by_name("new")
-		if tag is not None:
-			payload["data"]["tags"].append(str(tag))
-	elif modified:
-		tag = find_tag_by_name("updated")
-		if tag is not None:
-			payload["data"]["tags"].append(str(tag))
-	tag = find_tag_by_name(secrets.venue_ids[event["venue"]])
-	if tag is not None:
-		payload["data"]["tags"].append(str(tag))
+	payload["data"]["tags"] = list_relevant_tags(event, created, modified)
 	
 	# utils.print_json(payload)
 
@@ -198,23 +187,44 @@ def update_task_from_event(task_gid, event, created=False, modified=False):
 		headers = {"Authorization": secrets.asana_pat}
 		r = requests.post(base_path + "tasks/" + str(task_gid) + "/removeTag", headers=headers, json=payload)
 
+	tags_to_add = list_relevant_tags(event, created, modified)
+	for tag in tags_to_add:
+		payload = { "data": { "tag": tag } }
+		headers = {"Authorization": secrets.asana_pat}
+		r = requests.post(base_path + "tasks/" + str(task_gid) + "/addTag", headers=headers, json=payload)
+
+def list_relevant_tags(event, created, modified):
+	# every time a tag is proposed, the function looks for it
+	# if the tag is found, it's added, otherwise it isn't
+
+	# if the event should have the new tag, add it
 	tags_to_add = []
 	if created:
 		tag = find_tag_by_name("new")
 		if tag is not None:
 			tags_to_add.append(str(tag))
+	# if the event is not new and should have the modified tag, add it
 	elif modified:
 		tag = find_tag_by_name("updated")
 		if tag is not None:
 			tags_to_add.append(str(tag))
-	tag = find_tag_by_name(secrets.venue_ids[event["venue"]])
-	if tag is not None:
-		tags_to_add.append(str(tag))
 
-	for tag in tags_to_add:
-		payload = { "data": { "tag": tag } }
-		headers = {"Authorization": secrets.asana_pat}
-		r = requests.post(base_path + "tasks/" + str(task_gid) + "/addTag", headers=headers, json=payload)
+	resources = event["resources"]["resource"]
+	# because the data starts as xml, if what would be an array in json
+	# 	only has one element, it isn't converted to json, so this checks for that
+	if isinstance(resources, list):
+		for resource in resources:
+			if resource["@id"] in secrets.venue_ids:
+				tag = find_tag_by_name(secrets.venue_ids[resource["@id"]])
+				if tag is not None:
+					tags_to_add.append(str(tag))
+	else:
+		if resources["@id"] in secrets.venue_ids:
+			tag = find_tag_by_name(secrets.venue_ids[resources["@id"]])
+			if tag is not None:
+				tags_to_add.append(str(tag))
+
+	return tags_to_add
 
 # if this file is run, run the test method
 if __name__ == '__main__':
