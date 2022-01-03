@@ -2,7 +2,7 @@
 import requests, json, datetime, utils, ccb, asana, secrets
 from pprint import pprint
 
-time_diff = datetime.timedelta(days = 30)
+time_diff = datetime.timedelta(hours = 4)
 
 catch_errors = True
 subtask_names = []
