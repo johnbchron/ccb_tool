@@ -4,10 +4,14 @@ from pprint import pprint
 
 time_diff = datetime.timedelta(days = 30)
 
+catch_errors = True
+subtask_names = []
+
 def main():
 	analyze_recent_events()
 
 def analyze_recent_events():
+	global subtask_names
 	events = ccb.get_recently_modified_events(time_diff=time_diff)
 
 	modified_events = []
@@ -24,11 +28,27 @@ def analyze_recent_events():
 			elif (modified < this_scan_time and modified >= last_scan_time):
 				modified_events.append(events[i])
 
+	subtask_names = asana.get_master_subtask_names()
+
 	for event in created_events:
-		update_created_event(event)
+		if catch_errors:
+			try:
+				update_created_event(event)
+			except:
+				print("failed to create event", event["@id"])
+				utils.print_json(event)
+		else:
+			update_created_event(event)
 
 	for event in modified_events:
-		update_modified_event(event)
+		if catch_errors:
+			try:
+				update_modified_event(event)
+			except:
+				print("failed to modify event", event["@id"])
+				utils.print_json(event)
+		else:
+			update_modified_event(event)
 
 def check_for_venue_match(event):
 	if event["resources"] is None:
@@ -49,18 +69,20 @@ def check_for_venue_match(event):
 	return False
 
 def update_created_event(event):
+	global subtask_names
 	print("pushing created event:", event["@id"])
 	task_gid = asana.find_task_by_event_id(int(event["@id"]))
 	if task_gid is None:
-		asana.create_task_from_event(event, created=True)
+		asana.create_task_from_event(event, subtask_names, created=True)
 	else:
 		asana.update_task_from_event(task_gid, event, created=True)
 
 def update_modified_event(event):
+	global subtask_names
 	print("updating modified event:", event["@id"])
 	task_gid = asana.find_task_by_event_id(int(event["@id"]))
 	if task_gid is None:
-		asana.create_task_from_event(event, modified=True)
+		asana.create_task_from_event(event, subtask_names, modified=True)
 	else:
 		asana.update_task_from_event(task_gid, event, modified=True)
 

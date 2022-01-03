@@ -9,3 +9,6 @@ def text_to_json(text):
 
 def print_json(data):
 	print(json.dumps(data, indent=2))
+
+def uncapitalize(input):
+	return input[0].lower() + input[1:]
