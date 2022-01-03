@@ -78,8 +78,8 @@ def get_task(task_gid, restricted=True):
 
 # find the task that corresponds to the given event id
 def find_task_by_event_id(event_id):
-	tasks = list_tasks_by_project(project_gid=asana_project_gid)
-	tasks = tasks + list_tasks_by_project(project_gid=asana_test_project_gid)
+	tasks = list_tasks_by_project(project_gid=secrets.asana_project_gid)
+	tasks = tasks + list_tasks_by_project(project_gid=secrets.asana_test_project_gid)
 	# utils.print_json(tasks)
 	for task in tasks:
 		if ("(" + str(event_id) + ")") in task["name"]:
