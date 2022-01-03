@@ -8,6 +8,7 @@ def main():
 	# don't run any tests
 	pass
 
+# list all projects in antioch workspace
 def list_projects():
 	headers = {"Authorization": secrets.asana_pat}
 	r = requests.get(base_path + "projects", headers=headers)
@@ -15,6 +16,7 @@ def list_projects():
 	# utils.print_json(r.json()["data"])
 	return r.json()["data"]
 
+# list all sections within a project
 def list_sections_by_project(project_gid=secrets.asana_project_gid):
 	headers = {"Authorization": secrets.asana_pat}
 	r = requests.get(base_path + "projects/" + str(project_gid) + "/sections", headers=headers)
@@ -22,6 +24,7 @@ def list_sections_by_project(project_gid=secrets.asana_project_gid):
 	# utils.print_json(r.json()["data"])
 	return r.json()["data"]
 
+# list all tasks within a project
 def list_tasks_by_project(project_gid=secrets.asana_project_gid):
 	headers = {"Authorization": secrets.asana_pat}
 	r = requests.get(base_path + "projects/" + str(project_gid) + "/tasks", headers=headers)
@@ -29,6 +32,7 @@ def list_tasks_by_project(project_gid=secrets.asana_project_gid):
 	# utils.print_json(r.json()["data"])
 	return r.json()["data"]
 
+# list all subtasks within a task
 def list_subtasks(task_gid):
 	headers = {"Authorization": secrets.asana_pat}
 	r = requests.get(base_path + "tasks/" + str(task_gid) + "/subtasks", headers=headers)
@@ -36,6 +40,7 @@ def list_subtasks(task_gid):
 	# utils.print_json(r.json()["data"])
 	return r.json()["data"]
 
+# return array of names of subtasks from the template task in the test project
 def get_master_subtask_names():
 	data = list_subtasks(get_task(str(find_task_by_name("template")), restricted=False)["gid"])
 	subtask_names = []
@@ -43,6 +48,7 @@ def get_master_subtask_names():
 		subtask_names.append(item["name"])
 	return subtask_names[::-1]
 
+# list all tags in antioch workspace
 def list_tags():
 	headers = {"Authorization": secrets.asana_pat}
 	r = requests.get(base_path + "tags", headers=headers)
@@ -50,6 +56,7 @@ def list_tags():
 	# utils.print_json(r.json()["data"])
 	return r.json()["data"]
 
+# find a tag that matches the given name inside the antioch workspace
 def find_tag_by_name(name):
 	tags = list_tags()
 	# print("name of tag to find:", name)
@@ -58,6 +65,7 @@ def find_tag_by_name(name):
 			return int(tag["gid"])
 	return None
 
+# return all or specific fields from the task at the given id
 def get_task(task_gid, restricted=True):
 	headers = {"Authorization": secrets.asana_pat}
 	params = {}
@@ -68,6 +76,7 @@ def get_task(task_gid, restricted=True):
 	# utils.print_json(r.json()["data"])
 	return r.json()["data"]
 
+# find the task that corresponds to the given event id
 def find_task_by_event_id(event_id):
 	tasks = list_tasks_by_project()
 	tasks = tasks + list_tasks_by_project(project_gid=secrets.asana_test_project_gid)
@@ -86,6 +95,7 @@ def find_task_by_name(name):
 			return int(task["gid"])
 	return None
 
+# generates the task description containing the event link, recurrance description, and exceptions
 def generate_task_description(event):
 	recurring = False
 	if "every" in event["recurrence_description"].lower():
@@ -108,6 +118,7 @@ def generate_task_description(event):
 
 	return html_string
 
+# builds and posts a task based on a ccb event
 def create_task_from_event(event, subtask_names, created=False, modified=False):
 	# utils.print_json(event)
 
@@ -154,7 +165,7 @@ def create_task_from_event(event, subtask_names, created=False, modified=False):
 		payload = { "data": { "name": subtask_name } }
 		r = requests.post(base_path + "tasks/" + str(task_gid) + "/subtasks", headers=headers, json=payload)
 
-
+# builds and updates an event based on a ccb event
 def update_task_from_event(task_gid, event, created=False, modified=False):
 	trigger_text = "<strong>--- don't edit above this line ---</strong>\n"
 
@@ -204,5 +215,6 @@ def update_task_from_event(task_gid, event, created=False, modified=False):
 		headers = {"Authorization": secrets.asana_pat}
 		r = requests.post(base_path + "tasks/" + str(task_gid) + "/addTag", headers=headers, json=payload)
 
+# if this file is run, run the test method
 if __name__ == '__main__':
 	main()
