@@ -39,6 +39,8 @@ def analyze_recent_events(catch_errors=True):
 			elif (modified < this_scan_time and modified >= last_scan_time):
 				modified_events.append(events[i])
 
+	print("out of", len(events), "events,", len(created_events), "were created and", len(modified_events), "were modified within the timeframe")
+
 	# pull in the subtask names from the template task
 	# these subtasks will be added to every new task
 	subtask_names = asana.get_master_subtask_names()
