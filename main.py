@@ -5,7 +5,7 @@ sys.path.insert(0, './config/')
 import requests, json, datetime, utils, ccb, asana, secrets
 from pprint import pprint
 
-time_diff = datetime.timedelta(hours = 4)
+#time_diff = datetime.timedelta(hours = 4)
 
 catch_errors = True
 subtask_names = []
@@ -14,7 +14,7 @@ def main():
 	# analyze_recent_events()
 	pass
 
-def analyze_recent_events(catch_errors=True):
+def analyze_recent_events(catch_errors=True, time_diff=datetime.timedelta(hours=4)):
 	# declare subtask_names as a global variable
 	global subtask_names
 	# pull all new events from ccb
