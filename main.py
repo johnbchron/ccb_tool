@@ -27,6 +27,8 @@ def analyze_recent_events(catch_errors=True, time_diff=datetime.timedelta(hours=
 	this_scan_time = datetime.datetime.now()
 	last_scan_time = this_scan_time - time_diff
 
+	print("Concerned with events between", last_scan_time, "and now")
+
 	# for every event, first check if it matches one of the venues
 	# then parse out its creation and modified times
 	# then sort it if it matches its creation or modification time falls in the window
