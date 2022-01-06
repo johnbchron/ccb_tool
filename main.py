@@ -15,7 +15,7 @@ def main():
 	pass
 
 def analyze_recent_events_time_diff(time_diff, catch_errors=True, recurring_only=False, one_time_only=False):
-	analyze_recent_event_two_dates(datetime.datetime.now()-time_diff, datetime.datetime.now(), catch_errors=catch_errors, recurring_only=recurring_only, one_time_only=one_time_only)
+	return analyze_recent_event_two_dates(datetime.datetime.now()-time_diff, datetime.datetime.now(), catch_errors=catch_errors, recurring_only=recurring_only, one_time_only=one_time_only)
 
 def analyze_recent_event_two_dates(start_date, end_date, catch_errors=True, recurring_only=False, one_time_only=False):
 
@@ -28,6 +28,7 @@ def analyze_recent_event_two_dates(start_date, end_date, catch_errors=True, recu
 	# also set time scope for this go-around
 	modified_events = []
 	created_events = []
+	failed_events = []
 	last_scan_time = start_date
 	this_scan_time = end_date
 
@@ -93,6 +94,7 @@ def analyze_recent_event_two_dates(start_date, end_date, catch_errors=True, recu
 			except:
 				print("failed to create event", event["@id"])
 				utils.print_json(event)
+				failed_events.append(event)
 		else:
 			update_created_event(event)
 	
@@ -100,13 +102,18 @@ def analyze_recent_event_two_dates(start_date, end_date, catch_errors=True, recu
 	# catch the error if told to do so
 	for event in modified_events:
 		if catch_errors:
+			# failed_events.append(event)
 			try:
 				update_modified_event(event)
 			except:
 				print("failed to modify event", event["@id"])
 				utils.print_json(event)
+				failed_events.append(event)
 		else:
 			update_modified_event(event)
+
+	return failed_events
+
 
 # checks if the event carries a resource that matches one of the specified venues
 # these venues are specified in the secrets file
