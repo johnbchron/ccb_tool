@@ -14,18 +14,22 @@ def main():
 	# analyze_recent_events()
 	pass
 
-def analyze_recent_events(catch_errors=True, recurring_only=False, one_time_only=False, time_diff=datetime.timedelta(hours=4)):
+def analyze_recent_events_time_diff(time_diff, catch_errors=True, recurring_only=False, one_time_only=False):
+	analyze_recent_event_two_dates(datetime.datetime.now()-time_diff, datetime.datetime.now(), catch_errors=catch_errors, recurring_only=recurring_only, one_time_only=one_time_only)
+
+def analyze_recent_event_two_dates(start_date, end_date, catch_errors=True, recurring_only=False, one_time_only=False):
+
 	# declare subtask_names as a global variable
 	global subtask_names
 	# pull all new events from ccb
-	events = ccb.get_recently_modified_events(time_diff=time_diff)
+	events = ccb.get_recently_modified_events(time_diff=datetime.datetime.now()-start_date)
 
 	# create containers to hold tasks that were created or modified
 	# also set time scope for this go-around
 	modified_events = []
 	created_events = []
-	this_scan_time = datetime.datetime.now()
-	last_scan_time = this_scan_time - time_diff
+	last_scan_time = start_date
+	this_scan_time = end_date
 
 	print("Concerned with events between", last_scan_time, "and now")
 
@@ -50,6 +54,7 @@ def analyze_recent_events(catch_errors=True, recurring_only=False, one_time_only
 	# make the checks if the flags say to pass only recurring
 	#		or one-time events. remove the non-conformants with extreme prejudice.
 	if recurring_only:
+		print("only publishing recurring events")
 		passing_items = []
 		for i in range(len(created_events)):
 			if check_if_recurring(created_events[i]):
@@ -61,8 +66,10 @@ def analyze_recent_events(catch_errors=True, recurring_only=False, one_time_only
 			if check_if_recurring(modified_events[i]):
 				passing_items.append(modified_events[i])
 		modified_events = passing_items
+		print("after filtering,", len(created_events), "created events and", len(modified_events), "modified events remain")
 
 	elif one_time_only:
+		print("only publishing one-time events")
 		passing_items = []
 		for i in range(len(created_events)):
 			if not check_if_recurring(created_events[i]):
@@ -74,6 +81,7 @@ def analyze_recent_events(catch_errors=True, recurring_only=False, one_time_only
 			if not check_if_recurring(modified_events[i]):
 				passing_items.append(modified_events[i])
 		modified_events = passing_items
+		print("after filtering,", len(created_events), "created events and", len(modified_events), "modified events remain")
 
 
 	# for each created event
