@@ -14,7 +14,7 @@ def main():
 	# analyze_recent_events()
 	pass
 
-def analyze_recent_events(catch_errors=True, time_diff=datetime.timedelta(hours=4)):
+def analyze_recent_events(catch_errors=True, recurring_only=False, one_time_only=False, time_diff=datetime.timedelta(hours=4)):
 	# declare subtask_names as a global variable
 	global subtask_names
 	# pull all new events from ccb
@@ -46,6 +46,35 @@ def analyze_recent_events(catch_errors=True, time_diff=datetime.timedelta(hours=
 	# pull in the subtask names from the template task
 	# these subtasks will be added to every new task
 	subtask_names = asana.get_master_subtask_names()
+
+	# make the checks if the flags say to pass only recurring
+	#		or one-time events. remove the non-conformants with extreme prejudice.
+	if recurring_only:
+		passing_items = []
+		for i in range(len(created_events)):
+			if check_if_recurring(created_events[i]):
+				passing_items.append(created_events[i])
+		created_events = passing_items
+
+		passing_items = []
+		for i in range(len(modified_events)):
+			if check_if_recurring(modified_events[i]):
+				passing_items.append(modified_events[i])
+		modified_events = passing_items
+
+	elif one_time_only:
+		passing_items = []
+		for i in range(len(created_events)):
+			if not check_if_recurring(created_events[i]):
+				passing_items.append(created_events[i])
+		created_events = passing_items
+
+		passing_items = []
+		for i in range(len(modified_events)):
+			if not check_if_recurring(modified_events[i]):
+				passing_items.append(modified_events[i])
+		modified_events = passing_items
+
 
 	# for each created event
 	# catch the error if told to do so
