@@ -93,6 +93,15 @@ def check_for_venue_match(event):
 	# fail otherwise
 	return False
 
+# check if the event is a recurring event
+# currently the only way to do this is to check whether or not
+# 	the word "every" is in the recurrence description
+def check_if_recurring(event):
+	recurring = False
+	if "every" in event["recurrence_description"].lower():
+		recurring = True
+	return recurring
+
 #	if the task exists, modify it, otherwise create it
 # also add created tag
 def update_created_event(event):
