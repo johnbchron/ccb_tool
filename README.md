@@ -9,7 +9,7 @@
 
 ## Docker Installation
  It's a relatively standard Docker build but it needs a bind mount to supply the `secrets.py`.
- - (Install)[https://docs.docker.com/engine/install/] docker if it isn't already
+ - [Install](https://docs.docker.com/engine/install/) docker if it isn't already
  - Clone the repo like above.
  - Build the image by running `docker build -t ccb_tool .` in the repo directory.
  - Create a config directory with `mkdir ~/.ccb_tool` for example
