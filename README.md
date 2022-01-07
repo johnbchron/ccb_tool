@@ -5,8 +5,7 @@
  - Customizable polling frequency
  - Custom date range polls
  - Event filtering by venue 
- - Event filtering by event type (one-time, recurring)
- - Event sorting by event type (one-time, recurring)
+ - Event sorting and filtering by event type (one-time, recurring)
  - Task change notifications by tag (new, modified)
  - Customizable subtasks copied from template task
  - Customizable additional fields reported in task description
