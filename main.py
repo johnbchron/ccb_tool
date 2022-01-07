@@ -32,7 +32,7 @@ def analyze_recent_event_two_dates(start_date, end_date, catch_errors=True, recu
 	last_scan_time = start_date
 	this_scan_time = end_date
 
-	print("Concerned with events between", last_scan_time, "and now")
+	print("Concerned with events between", last_scan_time, "and", this_scan_time)
 
 	# for every event, first check if it matches one of the venues
 	# then parse out its creation and modified times
@@ -47,6 +47,14 @@ def analyze_recent_event_two_dates(start_date, end_date, catch_errors=True, recu
 				modified_events.append(events[i])
 
 	print("out of", len(events), "events,", len(created_events), "were created and", len(modified_events), "were modified within the timeframe")
+
+	# print("")
+	# for event in created_events:
+	# 	print(event["name"])
+	# print("")
+	# for event in modified_events:
+	# 	print(event["name"])
+	# print("")
 
 	# pull in the subtask names from the template task
 	# these subtasks will be added to every new task
