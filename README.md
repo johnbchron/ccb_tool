@@ -13,6 +13,6 @@
  - Clone the repo like above.
  - Build the image by running `docker build -t ccb_tool .` in the repo directory.
  - Create a config directory with `mkdir ~/.ccb_tool` for example
- - Run with `docker run -d -i -t --mount type=bind,source=/home/user/.ccb_tool,target=/ccb_tool/config --restart unless-stopped --name ccb_tool ccb_tool` or similar. Override the `TZ` env variable if necessary. Defaults to `America/Chicago`. 
+ - Run with `docker run -d -i -t --mount type=bind,source=/home/$(whoami)/.ccb_tool,target=/ccb_tool/config --restart unless-stopped --name ccb_tool ccb_tool` or similar. Override the `TZ` env variable if necessary. Defaults to `America/Chicago`. 
  - Place a `secrets.py` file in the bound directory following the scheme of `example_secrets.py`.
  - `docker container restart ccb_tool` to restart the container after config change.
