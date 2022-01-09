@@ -120,7 +120,7 @@ def analyze_recent_event_two_dates(start_date, end_date, catch_errors=True, recu
 		else:
 			update_modified_event(event)
 
-	return failed_events
+	return failed_events, len(created_events), len(modified_events)
 
 
 # checks if the event carries a resource that matches one of the specified venues
