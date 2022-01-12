@@ -14,10 +14,10 @@ def main():
 	# analyze_recent_events()
 	pass
 
-def analyze_recent_events_time_diff(time_diff, catch_errors=True, recurring_only=False, one_time_only=False):
-	return analyze_recent_event_two_dates(datetime.datetime.now()-time_diff, datetime.datetime.now(), catch_errors=catch_errors, recurring_only=recurring_only, one_time_only=one_time_only)
+def analyze_recent_events_time_diff(time_diff, catch_errors=True, potent=True, recurring_only=False, one_time_only=False):
+	return analyze_recent_event_two_dates(datetime.datetime.now()-time_diff, datetime.datetime.now(), catch_errors=catch_errors, potent=potent, recurring_only=recurring_only, one_time_only=one_time_only)
 
-def analyze_recent_event_two_dates(start_date, end_date, catch_errors=True, recurring_only=False, one_time_only=False):
+def analyze_recent_event_two_dates(start_date, end_date, catch_errors=True, potent=True, recurring_only=False, one_time_only=False):
 
 	# declare subtask_names as a global variable
 	global subtask_names
@@ -96,29 +96,31 @@ def analyze_recent_event_two_dates(start_date, end_date, catch_errors=True, recu
 	# for each created event
 	# catch the error if told to do so
 	for event in created_events:
-		if catch_errors:
-			try:
+		if potent:
+			if catch_errors:
+				try:
+					update_created_event(event)
+				except:
+					print("failed to create event", event["@id"])
+					utils.print_json(event)
+					failed_events.append(event)
+			else:
 				update_created_event(event)
-			except:
-				print("failed to create event", event["@id"])
-				utils.print_json(event)
-				failed_events.append(event)
-		else:
-			update_created_event(event)
 	
 	# for each modified event
 	# catch the error if told to do so
 	for event in modified_events:
-		if catch_errors:
-			# failed_events.append(event)
-			try:
+		if potent:
+			if catch_errors:
+				# failed_events.append(event)
+				try:
+					update_modified_event(event)
+				except:
+					print("failed to modify event", event["@id"])
+					utils.print_json(event)
+					failed_events.append(event)
+			else:
 				update_modified_event(event)
-			except:
-				print("failed to modify event", event["@id"])
-				utils.print_json(event)
-				failed_events.append(event)
-		else:
-			update_modified_event(event)
 
 	return failed_events, len(created_events), len(modified_events)
 
