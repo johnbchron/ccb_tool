@@ -1,5 +1,5 @@
 # ccb_tool
- CCB_Tool is a tool that pulls modified events from CCB on a regular basis and updates Asana tasks based on their changes. Events are filtered by event type or resources before being passed on to Asana. CCB_Tool also adds tags to indicate task status (modified, new) and notify the user of changes, as well as indicate which venue resources the event has. Event tasks are sorted by event type into sections on creation
+ CCB_Tool is a tool that pulls modified and newly created events from CCB on a regular basis and updates Asana tasks based on their changes. Events are filtered by event type or resources before being passed on to Asana. CCB_Tool also adds tags to indicate task status (modified, new) and notify the user of changes, as well as indicate which venue resources the event has. Event tasks are sorted by event type into sections on creation.
 
 ## Features
  - Customizable polling frequency
@@ -13,7 +13,7 @@
  - Robust API handling (pagination, return confirmation)
  - Email error reporting
  - Docker image
- - Separate credential handling
+ - Separate credentials handling
 
 ## Linux Installation
  - Download and extract or use `git clone`.
