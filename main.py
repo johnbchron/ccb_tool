@@ -61,6 +61,7 @@ def analyze_recent_event_two_dates(start_date, end_date, catch_errors=True, pote
 	try:
 		subtask_names = asana.get_master_subtask_names()
 	except:
+		print("unable to find subtasks in template. using dummy subtasks instead")
 		subtask_names = ["CCBTool was unable to retrieve subtasks", "from the template task.", "This is an error.", "Please contact John Lewis", "at (254) 548-7107 to resolve."]
 
 	# make the checks if the flags say to pass only recurring
