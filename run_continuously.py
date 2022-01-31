@@ -30,7 +30,7 @@ def scheduled_task():
 schedule.every().day.at("06:00").do(scheduled_task)
 
 # scheduled_task()
-print("ccb_tool started successfully. waiting until next run.")
+print("ccb_tool started successfully. waiting until first run.")
 while True:
   schedule.run_pending()
   time.sleep(60)
