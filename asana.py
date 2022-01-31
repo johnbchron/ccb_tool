@@ -17,7 +17,7 @@ def list_projects():
 	return r.json()["data"]
 
 # list all sections within a project
-def list_sections_by_project(project_gid=secrets.asana_project_gid):
+def list_sections_by_project(project_gid=secrets.asana_test_project_gid):
 	headers = {"Authorization": secrets.asana_pat}
 	r = requests.get(base_path + "projects/" + str(project_gid) + "/sections", headers=headers)
 	# print(r.status_code)
@@ -25,7 +25,7 @@ def list_sections_by_project(project_gid=secrets.asana_project_gid):
 	return r.json()["data"]
 
 # list all tasks within a project
-def list_tasks_by_project(project_gid=secrets.asana_project_gid):
+def list_tasks_by_project(project_gid=secrets.asana_test_project_gid):
 	headers = {"Authorization": secrets.asana_pat}
 	r = requests.get(base_path + "projects/" + str(project_gid) + "/tasks", headers=headers)
 	# print(r.status_code)
@@ -42,10 +42,12 @@ def list_subtasks(task_gid):
 
 # return array of names of subtasks from the template task in the test project
 def get_master_subtask_names():
-	data = list_subtasks(get_task(str(find_task_by_name("template", project_gid=secrets.asana_project_gid)), restricted=False)["gid"])
+	task = find_task_by_name("template", project_gid=secrets.asana_test_project_gid)
+	data = list_subtasks(get_task(str(task), restricted=False)["gid"])
 	subtask_names = []
 	for item in data:
 		subtask_names.append(item["name"])
+	# print(subtask_names[::-1])
 	return subtask_names[::-1]
 
 # list all tags in antioch workspace
@@ -78,8 +80,7 @@ def get_task(task_gid, restricted=True):
 
 # find the task that corresponds to the given event id
 def find_task_by_event_id(event_id):
-	tasks = list_tasks_by_project(project_gid=secrets.asana_project_gid)
-	tasks = tasks + list_tasks_by_project(project_gid=secrets.asana_test_project_gid)
+	tasks = list_tasks_by_project(project_gid=secrets.asana_test_project_gid)
 	# utils.print_json(tasks)
 	for task in tasks:
 		if ("(" + str(event_id) + ")") in task["name"]:
@@ -88,7 +89,7 @@ def find_task_by_event_id(event_id):
 	return None
 
 # find the task that matches the given name (used for finding the template task)
-def find_task_by_name(name, project_gid=secrets.asana_project_gid):
+def find_task_by_name(name, project_gid=secrets.asana_test_project_gid):
 	tasks = list_tasks_by_project(project_gid=project_gid)
 	for task in tasks:
 		if name.lower() in task["name"].lower():
