@@ -116,3 +116,4 @@ secrets.py
 refresh_docker.sh
 ccb_tool.sublime-project
 ccb_tool.sublime-workspace
+*.sublime-workspace
